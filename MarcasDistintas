@@ -1,0 +1,9 @@
+-- Creación de lista de marcas para revisión --
+
+DROP TABLE IF EXISTS "Marcas";
+
+CREATE TABLE "Marcas" AS
+
+SELECT DISTINCT "Marca"
+FROM "Consolidado"
+ORDER BY "Marca" ASC;
