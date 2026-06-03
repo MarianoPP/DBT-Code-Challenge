@@ -1,0 +1,49 @@
+
+-- Normalización de canales, a mi criterio, estos son los que detecté manualmente, normalizandolo luego del consolidado"
+
+UPDATE "Consolidado"
+SET canal = CASE 
+    -- 1. Quitar espacios en ESPN
+    WHEN canal = 'ESPN 2' THEN 'ESPN2'
+    WHEN canal = 'ESPN 3' THEN 'ESPN3'
+    
+    -- 2. Eliminar retrasos de hora (-1, -2, 0)
+    WHEN canal = 'Azteca 1 (-2)' THEN 'Azteca 1'
+    WHEN canal IN ('Canal 2 Televisa (-1)', 'Canal 2 Televisa (-2)', 'Canal 2 Televisa (0)') THEN 'Canal 2 Televisa'
+    
+    -- 3. Unificar Repetidoras (Rep.)
+    WHEN canal = 'Canal 2 Televisa Rep.' THEN 'Canal 2 Televisa'
+    WHEN canal = 'Canal 5 Televisa Rep.' THEN 'Canal 5 Televisa'
+    WHEN canal = 'Canal 9 Televisa Rep.' THEN 'Canal 9 Televisa'
+    WHEN canal IN ('Foro TV Rep.', 'Foro Tv Televisa') THEN 'Foro TV'
+    
+    -- 4. Corrección de nombres duplicados / Variaciones
+    WHEN canal = 'Imagen' THEN 'Imagen Televisión'
+    WHEN canal = 'Rádio Nova Veredas 89,3 FM' THEN 'Rádio Nova Veredas 89.3 FM'
+    WHEN canal = 'RADIO ITATIAIA BH' THEN 'Rádio Itatiaia BH'
+    WHEN canal = 'RÁDIO JORNAL FM' THEN 'Rádio Jornal FM'
+    
+    ELSE canal 
+END
+-- Este WHERE evita procesar filas que no necesitan cambios --
+WHERE canal IN (
+    'ESPN 2', 'ESPN 3', 'Azteca 1 (-2)', 'Canal 2 Televisa (-1)', 
+    'Canal 2 Televisa (-2)', 'Canal 2 Televisa (0)', 'Canal 2 Televisa Rep.', 
+    'Canal 5 Televisa Rep.', 'Canal 9 Televisa Rep.', 'Foro TV Rep.', 
+    'Foro Tv Televisa', 'Imagen', 'Rádio Nova Veredas 89,3 FM', 
+    'RADIO ITATIAIA BH', 'RÁDIO JORNAL FM'
+);
+
+-- Normalización de marcas personalizable, pongo los nombres dados en la consigna pero dejo espacio libre por si hay que modificar más --
+
+WITH cambios_marcas (marca_actual, marca_nueva) AS (
+    VALUES
+        ('PLAYGOOD', 'PLAY-GOOD'),
+        ('SPORTFLIX', '$PORTFLIX'),
+        ('MARCA_ORIGINAL_3', 'MARCA_CLIENTE_3'),
+        ('MARCA_ORIGINAL_4', 'MARCA_CLIENTE_4'))
+
+UPDATE "Consolidado" c
+SET "Marca" = m.marca_nueva
+FROM cambios_marcas m
+WHERE c."Marca" = m.marca_actual;
