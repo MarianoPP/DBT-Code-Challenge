@@ -1,0 +1,11 @@
+
+DROP TABLE IF EXISTS "Marcas_Excluidas";
+
+CREATE TABLE "Marcas_Excluidas" (
+    marca VARCHAR(255) PRIMARY KEY
+);
+
+INSERT INTO "Marcas_Excluidas" (marca) VALUES
+('Playgood'),
+('HotBet'),
+('Corel');
