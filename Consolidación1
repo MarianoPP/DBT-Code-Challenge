@@ -1,0 +1,79 @@
+--  Armado de primera tabla, armamos el consolidado de las tablas que obtenemos, lo consolidamos con UNION ALL y normalizamos para obtener una tabla con las columnas necesarias para revisión  --
+
+DROP TABLE IF EXISTS "Consolidado";
+
+CREATE TABLE "Consolidado" AS 
+
+    (SELECT
+        "Pais",
+        "Medio", 
+        "Emisora" AS canal, 
+        to_timestamp("Fecha" || ' ' || "Hora", 'DD/MM/YYYY HH24:MI:SS') AS fecha_hora_consolidada,
+        CASE 
+            WHEN EXTRACT(HOUR FROM to_timestamp("Fecha" || ' ' || "Hora", 'DD/MM/YYYY HH24:MI:SS')) BETWEEN 8 AND 17 THEN 'Day'
+            WHEN EXTRACT(HOUR FROM to_timestamp("Fecha" || ' ' || "Hora", 'DD/MM/YYYY HH24:MI:SS')) >= 18 
+              OR EXTRACT(HOUR FROM to_timestamp("Fecha" || ' ' || "Hora", 'DD/MM/YYYY HH24:MI:SS')) < 2 THEN 'Primetime'
+            ELSE 'Greytime'
+        END AS segment,
+        "Marca", 
+        "Version" AS version,
+        "Duracion" AS Duración,
+        CAST("ValorDolar" AS FLOAT) AS valor_dolar
+    FROM "Mercado_brasil_1"
+
+    UNION ALL
+
+    SELECT
+        "Pais",  
+        "Medio", 
+        "Emisora" AS canal, 
+        to_timestamp("Fecha" || ' ' || "Hora", 'DD/MM/YYYY HH24:MI:SS') AS fecha_hora_consolidada,
+        CASE 
+            WHEN EXTRACT(HOUR FROM to_timestamp("Fecha" || ' ' || "Hora", 'DD/MM/YYYY HH24:MI:SS')) BETWEEN 8 AND 17 THEN 'Day'
+            WHEN EXTRACT(HOUR FROM to_timestamp("Fecha" || ' ' || "Hora", 'DD/MM/YYYY HH24:MI:SS')) >= 18 
+              OR EXTRACT(HOUR FROM to_timestamp("Fecha" || ' ' || "Hora", 'DD/MM/YYYY HH24:MI:SS')) < 2 THEN 'Primetime'
+            ELSE 'Greytime'
+        END AS segment,
+        "Marca", 
+        "Version" AS version,
+        "Duracion" AS Duración,
+        CAST(REPLACE("ValorDolar", ',', '.') AS FLOAT) AS valor_dolar
+    FROM "Mercado_Brasil_2"
+
+    UNION ALL
+
+    SELECT 
+        'MÉXICO' AS Pais,
+        "Medio", 
+        "Canal" AS canal,
+        CAST("Hora GMT" AS TIMESTAMPTZ) AT TIME ZONE 'America/Mexico_City' AS fecha_hora_consolidada,
+        CASE 
+            WHEN EXTRACT(HOUR FROM CAST("Hora GMT" AS TIMESTAMPTZ) AT TIME ZONE 'America/Mexico_City') BETWEEN 8 AND 17 THEN 'Day'
+            WHEN EXTRACT(HOUR FROM CAST("Hora GMT" AS TIMESTAMPTZ) AT TIME ZONE 'America/Mexico_City') >= 18 
+              OR EXTRACT(HOUR FROM CAST("Hora GMT" AS TIMESTAMPTZ) AT TIME ZONE 'America/Mexico_City') < 2 THEN 'Primetime'
+            ELSE 'Greytime'
+        END AS segment,
+        "Marca", 
+        "Versión" AS version,
+        "Duración Programada" AS Duración,
+        NULL::FLOAT AS valor_dolar
+    FROM "Mercado_mexico_1"
+
+    UNION ALL
+
+    SELECT 
+        'MÉXICO' AS Pais,
+        "Medio", 
+        "Canal" AS canal,
+        CAST("Hora GMT" AS TIMESTAMPTZ) AT TIME ZONE 'America/Mexico_City' AS fecha_hora_consolidada,
+        CASE 
+            WHEN EXTRACT(HOUR FROM CAST("Hora GMT" AS TIMESTAMPTZ) AT TIME ZONE 'America/Mexico_City') BETWEEN 8 AND 17 THEN 'Day'
+            WHEN EXTRACT(HOUR FROM CAST("Hora GMT" AS TIMESTAMPTZ) AT TIME ZONE 'America/Mexico_City') >= 18 
+              OR EXTRACT(HOUR FROM CAST("Hora GMT" AS TIMESTAMPTZ) AT TIME ZONE 'America/Mexico_City') < 2 THEN 'Primetime'
+            ELSE 'Greytime'
+        END AS segment,
+        "Marca", 
+        "Versión" AS version,
+        "Duración Programada" AS Duración,
+        NULL::FLOAT AS valor_dolar
+    FROM "Mercado_Mexico_2");
