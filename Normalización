@@ -1,5 +1,5 @@
 
--- Normalización de canales, a mi criterio, estos son los que detecté manualmente, normalizandolo luego del consolidado"
+-- Normalización de canales, estos son los que detecté manualmente, normalizandolo luego del consolidado"
 
 UPDATE "Consolidado"
 SET canal = CASE 
