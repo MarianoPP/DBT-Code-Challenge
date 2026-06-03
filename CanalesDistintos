@@ -1,0 +1,9 @@
+-- Creación de lista de canales para revisión --
+
+DROP TABLE IF EXISTS "Canales";
+
+CREATE TABLE "Canales" AS
+
+SELECT DISTINCT "canal"
+FROM "Consolidado"
+Order by "canal";
