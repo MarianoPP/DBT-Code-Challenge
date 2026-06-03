@@ -5,6 +5,8 @@ En esta tabla buscamos info de 4 CSV, lo consolidamos con los datos necesarios p
 
 También tiene un listado de marcas excluidas modificable, que se utiliza para filtrar si hay falsos positivos y eliminarlos de la tabla consolidada final y no queden en los registros.
 
+En caso de que se necesite agregar nuevos registros, utilizar el primer código y agregar nuevas tablas a la lista de UNION ALL
+
 ```mermaid
 graph TD
     %% Estilos de las cajas
