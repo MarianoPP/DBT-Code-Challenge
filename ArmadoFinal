@@ -1,0 +1,21 @@
+-- Armado de tabla consolidada final, en la cual se arreglan nombres de columnas y se evitan las marcas excluidas como falsos positivos --
+
+DROP TABLE IF EXISTS "Consolidado_Final";
+
+CREATE TABLE "Consolidado_Final" AS (
+    SELECT 
+        c."Pais" AS País,
+        c."Medio" AS Medio,
+        c.canal AS Canal,
+        c.fecha_hora_consolidada AS Fecha_hora,
+        c.segment AS Segmento,
+        c."Marca" AS Marca,
+        c.version AS Versión,
+        c.duración AS Duración,
+        c.valor_dolar AS Valor_dolares
+    FROM "Consolidado" c
+    LEFT JOIN "Marcas_Excluidas" e
+        ON UPPER(TRIM(c."Marca")) = UPPER(TRIM(e.marca))
+    -- Filtramos para dejar fuera los falsos positivos
+    WHERE e.marca IS NULL
+);
